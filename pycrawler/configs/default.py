@@ -16,7 +16,7 @@ class DefaultConfig(object):
     #Database
     # For SQLite:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + basedir + '/' + \
-                                  'prcrawler-web.sqlite'
+                                  'pycrawler.sqlite'
 
     # This option will be removed as soon as Flask-SQLAlchemy removes it.
     # At the moment it is just used to suppress the super annoying warning

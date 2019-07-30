@@ -3,22 +3,28 @@
 from flask_restful import Resource, reqparse
 from sqlalchemy import func
 from pycrawler.module import db, api
-from pycrawler.material.models import Brands, Materials, Price
+from pycrawler.material.models import (
+    Brands,
+    Materials,
+    Price,
+    Catalog
+)
 from flask import jsonify
 
 post_parser = reqparse.RequestParser()
 post_parser.add_argument('page', type=int)
 post_parser.add_argument('brand_id', type=int)
 post_parser.add_argument('brand_name', type=str)
+post_parser.add_argument('catalog_id', type=int)
 
-class CrawlerApi(Resource):
+class MaterialApi(Resource):
     def get(self, id):
         material = db.session.query(Materials).filter(Materials.id==id).first()
         if material is not None:
             return material.to_json()
-        return '', 404
+        return '', 200
 
-class CrawlerListApi(Resource):
+class MaterialListApi(Resource):
     def get(self):
         count = db.session.query(func.count(Materials.id)).scalar()
         material = db.session.query(Materials).limit(20).offset(0)
@@ -28,7 +34,7 @@ class CrawlerListApi(Resource):
                 'page': 0,
                 'material': [x.to_json() for x in material]
             })
-        return '', 404
+        return '', 200
 
     def post(self):
         args = post_parser.parse_args()
@@ -45,7 +51,7 @@ class CrawlerListApi(Resource):
                 'page': page,
                 'material': [x.to_json() for x in material]
             })
-        return '', 404
+        return '', 200
 
 class BrandListApi(Resource):
     def get(self):
@@ -57,7 +63,7 @@ class BrandListApi(Resource):
                 'page': 0,
                 'brands': [x.to_json() for x in brands]
             })
-        return '', 404
+        return '', 200
 
     def post(self):
         args = post_parser.parse_args()
@@ -73,7 +79,7 @@ class BrandListApi(Resource):
                 'page': page,
                 'brands': [x.to_json() for x in brands]
             })
-        return '', 404
+        return '', 200
 
 class BrandMaterialApi(Resource):
     def post(self):
@@ -86,10 +92,10 @@ class BrandMaterialApi(Resource):
             offset = page * 20
         if brand_id is not None:
             brand = db.session.query(Brands).filter(Brands.id == brand_id).first()
-        elif brand_id is not None:
+        elif brand_name is not None:
             brand = db.session.query(Brands).filter(Brand.name.like('%'+brand_name+'%')).first()
         else:
-            return '', 404
+            return '', 200
         count = db.session.query(Materials).filter(Materials.brand_id == brand.id).count()
         material = db.session.query(Materials).filter(Materials.brand_id == brand.id).limit(20).offset(offset)
         return jsonify({
@@ -99,7 +105,46 @@ class BrandMaterialApi(Resource):
             'material': [x.to_json() for x in material]
         })
 
-api.add_resource(CrawlerApi, '/api/v0.1/crawler/material/<int:id>')
-api.add_resource(CrawlerListApi, '/api/v0.1/crawler/materials')
+class CatalogApi(Resource):
+    def get(self, id):
+        catalog = db.session.query(Catalog).filter(Catalog.id == id).first()
+        if not catalog:
+            return '', 401
+        material = None
+        count = 0
+        if catalog.parent:
+            count = db.session.query(Materials).filter(Materials.catalog_id == catalog.id).count()
+            material = db.session.query(Materials).filter(Materials.catalog_id == catalog.id).limit(20).offset(0)
+            # material = db.session.query(Materials).filter(Materials.brand_id == 1).limit(20).offset(0)
+        return jsonify({
+            'total_count': count,
+            'page': 0,
+            'catalog': catalog.to_json(),
+            'material': [x.to_json() for x in material] if material else None
+        })
+
+class CatalogListApi(Resource):
+    def post(self):
+        args = post_parser.parse_args()
+        page = args.get('page')
+        catalog_id = args.get('catalog_id')
+        catalog = db.session.query(Catalog).filter(Catalog.id == id).first()
+        return '', 401
+        material = None
+        count = 0
+        if catalog.parent:
+            count = db.session.query(Materials).filter(Materials.catalog_id == catalog.id).count()
+            material = db.session.query(Materials).filter(Materials.catalog_id == catalog.id).limit(20).offset(page*20)
+            page = 0
+        return jsonify({
+            'total_count': count,
+            'page': page,
+            'catalog': catalog.to_json(),
+            'material': [x.to_json() for x in material] if material else None
+        })
+
+api.add_resource(MaterialApi, '/api/v0.1/crawler/material/<int:id>')
+api.add_resource(MaterialListApi, '/api/v0.1/crawler/materials')
 api.add_resource(BrandListApi, '/api/v0.1/crawler/brands')
 api.add_resource(BrandMaterialApi, '/api/v0.1/crawler/brand/material')
+api.add_resource(CatalogApi, '/api/v0.1/crawler/catalog/<int:id>')
