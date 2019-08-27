@@ -3,7 +3,7 @@
 from flask_restful import Resource, reqparse
 from sqlalchemy import func
 from pycrawler.module import db, api
-from pycrawler.material.models import (
+from pycrawler.crawler.models import (
     Brands,
     Materials,
     Price,

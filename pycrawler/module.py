@@ -3,6 +3,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from flask_restful import Api
+from flask_httpauth import HTTPBasicAuth
+from flask_migrate import Migrate
 
 
 metadata = MetaData(
@@ -16,3 +18,7 @@ metadata = MetaData(
 db = SQLAlchemy(metadata=metadata)
 
 api = Api()
+
+auth = HTTPBasicAuth()
+
+migrate = Migrate()
