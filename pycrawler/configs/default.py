@@ -2,7 +2,7 @@
 
 import os
 import sys
-
+import datetime
 
 class DefaultConfig(object):
     basedir = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(
@@ -105,7 +105,10 @@ class DefaultConfig(object):
     #Database
     # For SQLite:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + basedir + '/' + \
-                                  'pycrawler.sqlite'
+                                  'test.sqlite'
+    SQLALCHEMY_BINDS = {
+        'crawler': 'sqlite:///' + basedir + '/' + 'pycrawler.sqlite'
+    }
 
     # This option will be removed as soon as Flask-SQLAlchemy removes it.
     # At the moment it is just used to suppress the super annoying warning
@@ -115,3 +118,5 @@ class DefaultConfig(object):
 
 
     SECRET_KEY = 'ijkaumadidihiihddd'
+
+    REMEMBER_COOKIE_DURATION = datetime.timedelta(days=10)

@@ -13,10 +13,10 @@ from .module import (
     api,
     auth,
     migrate,
+    login_manager,
 )
 
-from .crawler import views as cralwer_views #noqa
-from .brand import views as brand_views #noqa
+
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +44,18 @@ def configure_module(app):
     api.init_app(app)
 
     migrate.init_app(app, db)
+    login_manager.login_view = 'user.login'
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        """Loads the user. Required by the `login` extension."""
+        user_instance = User.query.filter_by(id=user_id).first()
+        if user_instance:
+            return user_instance
+        else:
+            return None
+
+    login_manager.init_app(app)
 
 def configure_pluggy(app):
     # iteritems = lambda d: d.iteritems()

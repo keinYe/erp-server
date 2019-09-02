@@ -1,8 +1,13 @@
 # -*- coding:utf-8 -*-
 
-import click
+import click, logging
 from pycrawler import create_app
 from flask.cli import FlaskGroup, ScriptInfo
+from pycrawler.module import db
+from sqlalchemy_utils import database_exists, create_database
+from pycrawler.user.models import User
+
+logger = logging.getLogger(__name__)
 
 class PycrawlerGroup(FlaskGroup):
     def __init__(self, *args, **kwargs):
@@ -30,3 +35,16 @@ def pycrawler(ctx):
         # show the help text instead of an error
         # when just '--config' option has been provided
         click.echo(ctx.get_help())
+
+@pycrawler.command('init', help="initialization databse")
+# @click.option(help="initialization databse")
+@click.option("--username", "-u", default='test', help="The username of the user.")
+@click.option("--password", "-p", default='test', help="The password of the user.")
+def install(username, password):
+    if database_exists(db.engine.url):
+        db.drop_all(bind=None)
+    else:
+        create_database(db.engine.url)
+    db.create_all(bind=None)
+
+    user = User.create(name=username, password=password)

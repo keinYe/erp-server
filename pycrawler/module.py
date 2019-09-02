@@ -5,6 +5,7 @@ from sqlalchemy import MetaData
 from flask_restful import Api
 from flask_httpauth import HTTPBasicAuth
 from flask_migrate import Migrate
+from flask_login import LoginManager
 
 
 metadata = MetaData(
@@ -22,3 +23,5 @@ api = Api()
 auth = HTTPBasicAuth()
 
 migrate = Migrate()
+
+login_manager = LoginManager()

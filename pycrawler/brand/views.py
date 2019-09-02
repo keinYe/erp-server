@@ -8,11 +8,14 @@ from pycrawler.crawler.models import Brands, Catalog, Materials
 from pycrawler.module import db
 from flask import render_template, jsonify
 import logging
+from flask_login import login_required
 
 logger = logging.getLogger(__name__)
 
 
 class BrandBar(MethodView):
+    decorators = [login_required]
+    
     def get(self):
         brands = [name[0] for name in db.session.query(Brands.name).all()]
         # brands = db.session.query(Brands).all()
@@ -49,5 +52,5 @@ class BrandBar(MethodView):
 @impl
 def hook_load_blueprints(app):
     brand = Blueprint('brand', __name__)
-    register_view(brand, routes=['/bar'], view_func=BrandBar.as_view('index'))
+    register_view(brand, routes=['/bar'], view_func=BrandBar.as_view('bar'))
     app.register_blueprint(brand, url_prefix='/brand')

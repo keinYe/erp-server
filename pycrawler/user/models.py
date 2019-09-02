@@ -6,8 +6,9 @@ import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, BadData
+from flask_login import UserMixin
 
-class User(db.Model, CRUDMixin):
+class User(db.Model, UserMixin, CRUDMixin):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

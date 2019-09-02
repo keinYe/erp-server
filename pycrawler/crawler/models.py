@@ -8,6 +8,7 @@ import datetime
 
 class Brands(db.Model, CRUDMixin):
     __tablename__ = 'brands'
+    __bind_key__ = 'crawler'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
@@ -25,6 +26,7 @@ class Brands(db.Model, CRUDMixin):
 
 class Materials(db.Model, CRUDMixin):
     __tablename__ = 'materials'
+    __bind_key__ = 'crawler'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False)
@@ -49,6 +51,7 @@ class Materials(db.Model, CRUDMixin):
 
 class Price(db.Model, CRUDMixin):
     __tablename__ = 'price'
+    __bind_key__ = 'crawler'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -63,6 +66,7 @@ class Price(db.Model, CRUDMixin):
 
 class Catalog(db.Model, CRUDMixin):
     __tablename__ = 'catalog'
+    __bind_key__ = 'crawler'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
