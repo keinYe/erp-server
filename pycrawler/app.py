@@ -16,6 +16,8 @@ from .module import (
     login_manager,
 )
 
+from .template_filter import format_date
+
 
 
 logger = logging.getLogger(__name__)
@@ -28,6 +30,7 @@ def create_app(config=None):
     config_app(app, config)
     configure_pluggy(app)
     configure_module(app)
+    configure_template_filters(app)
 
     return app
 
@@ -102,6 +105,14 @@ def configure_default_logging(app):
     logging.config.dictConfig(app.config["LOG_DEFAULT_CONF"])
     if app.config["SEND_LOGS"]:
         configure_mail_logs(app)
+
+def configure_template_filters(app):
+    """Configures the template filters."""
+    filters = {}
+
+    filters["format_date"] = format_date
+
+    app.jinja_env.filters.update(filters)
 
 
 @auth.verify_password
