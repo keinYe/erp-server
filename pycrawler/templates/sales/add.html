@@ -179,6 +179,11 @@
             // if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
             //   xhr.setRequestHeader("X-CSRFToken", csrftoken)
             // }
+          },
+          success: function (data) {
+            if (data.status = 302) {
+              location.href = data.location;
+            }
           }
         })
         .done(function(response) {

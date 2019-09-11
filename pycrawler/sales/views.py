@@ -8,6 +8,8 @@ from flask import (
     redirect,
     url_for,
     request,
+    flash,
+    jsonify,
 )
 from pycrawler.user.models import User
 from flask_login import login_required
@@ -33,14 +35,10 @@ class SalesEdit(MethodView):
 class SalseList(MethodView):
 
     def get(self):
-        logger.info('test')
         page = request.args.get("page", 1, type=int)
         records = SalesRecord.query.order_by(desc(SalesRecord.id)).paginate(
             page, 30, False
         )
-        logger.info(records)
-        # for record in records:
-        #     logger.info(record)
         return render_template('sales/list.html', records=records)
 
 class SalesAdd(MethodView):
@@ -50,7 +48,6 @@ class SalesAdd(MethodView):
 
     def post(self):
         json = request.get_json(force=True)
-        logger.info(json)
         model = json['model']
         quantity = int(json['quantity'])
         applicant = json['applicant']
@@ -67,7 +64,7 @@ class SalesAdd(MethodView):
             sales.tel = json['tel']
             sales.remarks = json['remarks']
             sales.save()
-            return redirect(url_for('sales.list'))
+            return jsonify({'status':302, 'location':'/sales/list'})
         return render_template('sales/add.html')
 
 @impl
