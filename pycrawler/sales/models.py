@@ -19,3 +19,5 @@ class SalesRecord(db.Model, CRUDMixin):
     address = db.Column(db.String(200))
     tel = db.Column(db.String(20))
     remarks = db.Column(db.String(200))
+    # contact_id = db.Column(db.Integer, db.ForeignKey('contact.id'))
+    # agent_id = db.Column(db.Integer, db.ForeignKey('agent.id'))

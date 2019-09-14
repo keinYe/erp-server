@@ -1,0 +1,65 @@
+{% set page_title = "User List" %}
+{% extends "base.html" %}
+
+{% block stylesheets %}
+<style media="screen" type="text/css">
+  .table>tbody>tr>td,
+  .table>tbody>tr>th,
+  .table>tfoot>tr>td,
+  .table>tfoot>tr>th,
+  .table>thead>tr>td,
+  .table>thead>tr>th {
+    padding: 4px;
+  }
+
+  th a {
+    color: black;
+  }
+
+  .label-header {
+    padding-right: 20px;
+  }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <label style="font-size:15px;">
+    <a href="{{ url_for('agent.list') }}" style="color:black;"> 代理商列表 </a>
+  </label>
+  <label style="font-size:10px;float: right!important;">
+    <a href="{{ url_for('agent.add_agent') }}" style="color:black;"> 代理商 </a>
+  </label>
+  <label class="label-header" style="font-size:10px;float: right!important;">
+    <a href="{{ url_for('agent.add_contact') }}" style="color:black;"> 联系人 </a>
+  </label>
+  <table class="sales_list table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">名称</th>
+        <th scope="col">地址</th>
+        <th scope="col">电话</th>
+        <th scope="col">传真</th>
+        <th scope="col">联系人</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for agent in  agents.items %}
+      <tr>
+        <th scope="row"><a href="{{url_for('user.list')}}?id={{agent.id}}">{{agent.id}}</a></th>
+        <th>{{agent.name}}</th>
+        <th>{{agent.address}}</th>
+        <th>{{agent.tel}}</th>
+        <th>{{agent.fax}}</th>
+        {% if agent.contact|length %}
+        <th>{{agent.contact[0].name}}</th>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

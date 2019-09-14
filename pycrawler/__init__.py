@@ -8,6 +8,7 @@ from pluggy import HookimplMarker
 from .brand import views as brand_views #noqa
 from .user import views as user_views #noqa
 from .sales import views as sales_views #noqa
+from .agent import views as agent_views #noqa
 
 
 impl = HookimplMarker('pycrawler')
