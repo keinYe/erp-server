@@ -38,7 +38,7 @@
     <tbody>
       {% for user in  users.items %}
       <tr>
-        <th scope="row"><a href="{{url_for('user.list')}}?id={{user.id}}">{{user.id}}</a></th>
+        <th scope="row"><a href="{{url_for('user.edit')}}?id={{user.id}}">{{user.id}}</a></th>
         <th>{{user.create_date | format_date}}</th>
         <th>{{user.name}}</th>
       </tr>

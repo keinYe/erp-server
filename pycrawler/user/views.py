@@ -60,20 +60,41 @@ class Add(MethodView):
     def post(self):
         username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(username == username).first()
-        if user is not None:
+        user = User.query.filter(User.name == username).first()
+        if user is None:
             user = User()
-            user.username = username
+            user.name = username
             user.password = password
             user.save()
             return redirect(url_for('user.list'))
         return render_template('user/login.html')
+
+class Edit(MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        user_id = request.args.get('id', None, type=int)
+        user = None
+        if user_id is not None:
+            user = User.query.filter(User.id == user_id).first()
+        return render_template('user/edit.html', user=user)
+
+    def post(self):
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter(User.name == username).first()
+        if user is not None:
+            user.password = password
+            user.save()
+        return redirect(url_for('user.list'))
+
 
 @impl
 def hook_load_blueprints(app):
     user = Blueprint('user', __name__)
     register_view(user, routes=['/login'], view_func=Login.as_view('login'))
     register_view(user, routes=['/logout'], view_func=Logout.as_view('logout'))
-    register_view(user, routes=['/list'], view_func=List.as_view('list'))
-    register_view(user, routes=['/add'], view_func=Add.as_view('add'))
+    # register_view(user, routes=['/list'], view_func=List.as_view('list'))
+    # register_view(user, routes=['/add'], view_func=Add.as_view('add'))
+    register_view(user, routes=['/edit'], view_func=Edit.as_view('edit'))
     app.register_blueprint(user, url_prefix='/user')

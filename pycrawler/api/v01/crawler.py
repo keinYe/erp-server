@@ -143,8 +143,8 @@ class CatalogListApi(Resource):
             'material': [x.to_json() for x in material] if material else None
         })
 
-api.add_resource(MaterialApi, '/api/v0.1/crawler/material/<int:id>')
-api.add_resource(MaterialListApi, '/api/v0.1/crawler/materials')
-api.add_resource(BrandListApi, '/api/v0.1/crawler/brands')
-api.add_resource(BrandMaterialApi, '/api/v0.1/crawler/brand/material')
-api.add_resource(CatalogApi, '/api/v0.1/crawler/catalog/<int:id>')
+api.add_resource(MaterialApi, '/api/v01/crawler/material/<int:id>')
+api.add_resource(MaterialListApi, '/api/v01/crawler/materials')
+api.add_resource(BrandListApi, '/api/v01/crawler/brands')
+api.add_resource(BrandMaterialApi, '/api/v01/crawler/brand/material')
+api.add_resource(CatalogApi, '/api/v01/crawler/catalog/<int:id>')

@@ -11,12 +11,16 @@ import sys
 from .module import (
     db,
     api,
-    auth,
+    basic_auth,
+    token_auth,
     migrate,
     login_manager,
 )
 
 from .template_filter import format_date
+from flask_cors import CORS
+
+
 
 
 
@@ -27,6 +31,8 @@ def create_app(config=None):
     app = Flask(
         'pycrawler', instance_relative_config=True, static_folder="templates"
     )
+    # cors = CORS(app, supports_credentials=True,resources={r"/api/*": {"origins": "*"}})
+    cors = CORS(app, supports_credentials=True)
     config_app(app, config)
     configure_pluggy(app)
     configure_module(app)
@@ -58,7 +64,7 @@ def configure_module(app):
         else:
             return None
 
-    login_manager.init_app(app)
+    login_manager.init_app(app, current_app)
 
 def configure_pluggy(app):
     # iteritems = lambda d: d.iteritems()
@@ -115,15 +121,34 @@ def configure_template_filters(app):
     app.jinja_env.filters.update(filters)
 
 
-@auth.verify_password
-def verify_password(username_or_token, password):
-    # first try to authenticate by token
-    user = User.verify_auth_token(username_or_token, current_app)
-    logger.info('username:{} password:{}'.format(username_or_token, password))
-    if not user:
-        # try to authenticate with username/password
-        user = User.query.filter_by(name = username_or_token).first()
-        if not user or not user.check_password(password):
-            return False
+@basic_auth.verify_password
+def verify_password(username, password):
+    g.current_user = None
+    user = User.query.filter_by(name = username).first()
+    if not user or not user.check_password(password):
+        return False
     g.current_user = user
     return True
+
+
+@token_auth.verify_token
+def verify_token(token):
+    g.current_user = None
+    user = User.verify_auth_token(token, current_app)
+    if not user:
+        return False
+    g.current_user = user
+    return True
+
+# @multi_auth.verify_password
+# def verify_password(username_or_token, password):
+#     # first try to authenticate by token
+#     user = User.verify_auth_token(username_or_token, current_app)
+#     logger.info('username:{} password:{}'.format(username_or_token, password))
+#     if not user:
+#         # try to authenticate with username/password
+#         user = User.query.filter_by(name = username_or_token).first()
+#         if not user or not user.check_password(password):
+#             return False
+#     g.current_user = user
+#     return True

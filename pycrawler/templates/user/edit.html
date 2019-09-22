@@ -1,0 +1,81 @@
+{% set page_title = "User Edit" %}
+{% extends "user/base.html" %}
+
+{% block stylesheets %}
+<style media="screen" type="text/css">
+  body {
+    background-color: rgb(255, 242, 229);
+  }
+  .center-in-center {
+    width: auto;
+    height: auto;
+    position: absolute;
+    padding: 10px 20px 0px 20px;
+    top: 50%;
+    left: 50%;
+    background-color: white;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+  .input-group {
+    width: 300px;
+    height: 50px;
+  }
+  .form-control {
+    height: inherit;
+    font-size: 16px;
+  }
+  .login-title {
+    text-align: center;
+    font-size: 20px;
+    padding-bottom: 10px;
+  }
+  .submit {
+    border-radius: 4px;
+    color: #fff;
+    width: 100%;
+    background-color: #3B78DD;
+    font-size: 20px;
+    height: 50px;
+    line-height: 50px;
+  }
+  .input-group-addon {
+    font-size: 16px;
+  }
+  .login-form-filling {
+    height: 20px;
+  }
+  .remember-group {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="center-in-center">
+  <div class="login-title margin-bottom-sm">
+    <label>更&nbsp;&nbsp新</label>
+  </div>
+  <form role="form" method="post">
+    <div class="input-group margin-bottom-sm">
+      <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
+      <input class="form-control" type="text" readonly="readonly"
+        placeholder="用户不存在" name="username" value="{{user.name}}">
+    </div>
+    <div class="login-form-filling"></div>
+    <div class="input-group">
+      <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+      <input class="form-control" type="password" placeholder="请输入密码" name="password">
+    </div>
+    <div class="login-form-filling"></div>
+    <div class="input-group">
+      <button class="submit" type="submit" name="button" value="login">更&nbsp;&nbsp新</button>
+    </div>
+    <div class="login-form-filling"></div>
+  </form>
+</div>
+{% endblock %}

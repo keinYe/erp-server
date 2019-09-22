@@ -7,6 +7,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, BadData
 from flask_login import UserMixin
+from flask import current_app
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Department:
     ADMINISTRATION = 0b00000000001
@@ -47,6 +51,14 @@ class User(db.Model, UserMixin, CRUDMixin):
                           descriptor=property(_get_password,
                                               _set_password))
 
+    def to_json(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'create_date': self.create_date,
+            'admin': self.check_permission(Permission.ADMINISTRATOR)
+        }
+
     def check_password(self, password):
         """Check passwords. If passwords match it returns true, else false."""
 
@@ -65,17 +77,20 @@ class User(db.Model, UserMixin, CRUDMixin):
 
     def check_permission(self, permission):
         return self.permission is not None and (
-            self.permission & permissions
-        ) == permissions
+            self.permission & permission
+        ) == permission
 
     @staticmethod
     def verify_auth_token(token, app):
         s = Serializer(app.config['SECRET_KEY'])
+        logger.info(token)
         try:
             data = s.loads(token)
         # except SignatureExpired:
         #     return None # valid token, but expired
         except BadSignature:
+            logger.info('BadSignature')
             return None # invalid token
+        logger.info(data)
         user = User.query.get(data['id'])
         return user
