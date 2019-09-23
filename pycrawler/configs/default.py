@@ -118,5 +118,6 @@ class DefaultConfig(object):
 
 
     SECRET_KEY = 'ijkaumadidihiihddd'
+    TOKEN_EXPIRE = 60 * 60 * 24
 
     REMEMBER_COOKIE_DURATION = datetime.timedelta(days=10)

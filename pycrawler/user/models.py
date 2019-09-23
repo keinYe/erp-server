@@ -8,6 +8,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, BadData
 from flask_login import UserMixin
 from flask import current_app
+from pycrawler.template_filter import format_date
 import logging
 
 logger = logging.getLogger(__name__)
@@ -55,7 +56,7 @@ class User(db.Model, UserMixin, CRUDMixin):
         return {
             'id': self.id,
             'name': self.name,
-            'create_date': self.create_date,
+            'create_date': format_date(self.create_date),
             'admin': self.check_permission(Permission.ADMINISTRATOR)
         }
 
@@ -83,7 +84,6 @@ class User(db.Model, UserMixin, CRUDMixin):
     @staticmethod
     def verify_auth_token(token, app):
         s = Serializer(app.config['SECRET_KEY'])
-        logger.info(token)
         try:
             data = s.loads(token)
         # except SignatureExpired:
@@ -91,6 +91,5 @@ class User(db.Model, UserMixin, CRUDMixin):
         except BadSignature:
             logger.info('BadSignature')
             return None # invalid token
-        logger.info(data)
         user = User.query.get(data['id'])
         return user
