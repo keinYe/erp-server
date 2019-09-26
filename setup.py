@@ -2,11 +2,11 @@
 from setuptools import setup
 
 setup(
-    name='pycrawler',
+    name='server',
     version='0.0.1',
     entry_points="""
         [console_scripts]
-        pycrawler=pycrawler.cli:pycrawler
+        server=server.cli:server
     """,
 
 )

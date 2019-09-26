@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-from pycrawler import create_app
+from server import create_app
 
 app = create_app()
 
