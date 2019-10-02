@@ -47,4 +47,4 @@ def install(username, password):
         create_database(db.engine.url)
     db.create_all(bind=None)
 
-    user = User.create(name=username, password=password)
+    user = User.create(name=username, password=password, active=True)

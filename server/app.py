@@ -79,7 +79,7 @@ def configure_default_logging(app):
 def verify_password(username, password):
     g.current_user = None
     user = User.query.filter_by(name = username).first()
-    if not user or not user.check_password(password):
+    if not user or not user.check_password(password) or not user.isActive():
         return False
     g.current_user = user
     return True
@@ -89,7 +89,7 @@ def verify_password(username, password):
 def verify_token(token):
     g.current_user = None
     user = User.verify_auth_token(token, current_app)
-    if not user:
+    if not user or not user.isActive():
         return False
     g.current_user = user
     return True

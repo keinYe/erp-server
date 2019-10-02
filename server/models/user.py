@@ -36,6 +36,7 @@ class User(db.Model, UserMixin, CRUDMixin):
     create_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     department = db.Column(db.Integer, default=0)
     permission = db.Column(db.Integer, default=0)
+    active = db.Column(db.Boolean, default=False)
 
     def _get_password(self):
         """Returns the hashed password."""
@@ -57,7 +58,8 @@ class User(db.Model, UserMixin, CRUDMixin):
             'id': self.id,
             'name': self.name,
             'create_date': format_date(self.create_date),
-            'admin': self.check_permission(Permission.ADMINISTRATOR)
+            'admin': self.check_permission(Permission.ADMINISTRATOR),
+            'active': self.isActive()
         }
 
     def check_password(self, password):
@@ -66,6 +68,9 @@ class User(db.Model, UserMixin, CRUDMixin):
         if self.password is None:
             return False
         return check_password_hash(self.password, password)
+
+    def isActive(self):
+        return self.active
 
     def generate_auth_token(self, app, expiration = 600):
         s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)

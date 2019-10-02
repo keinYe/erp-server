@@ -16,7 +16,6 @@ class Agent(db.Model, CRUDMixin):
     tel = db.Column(db.String(20))
     fax = db.Column(db.String(20))
     contact = db.relationship('Contact', backref='agent')
-    salesrecord = db.relationship('SalesRecord', backref='agent')
 
 class Contact(db.Model, CRUDMixin):
     ''' 联系人 '''
@@ -29,7 +28,6 @@ class Contact(db.Model, CRUDMixin):
     tel = db.Column(db.String(20))
 
     agent_id = db.Column(db.Integer, db.ForeignKey('agent.id'))
-    salesrecord = db.relationship('SalesRecord', backref='contact')
 
 class SalesRecord(db.Model, CRUDMixin):
     __tablename__ = 'salesrecord'
@@ -40,7 +38,11 @@ class SalesRecord(db.Model, CRUDMixin):
     model = db.Column(db.String(50), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     applicant = db.Column(db.String(50), nullable=False)
-    remarks = db.Column(db.String(200))
 
-    agent_id = db.Column(db.Integer, db.ForeignKey('agent.id'))
-    contact_id = db.Column(db.Integer, db.ForeignKey('contact.id'))
+    agent_name = db.Column(db.String(200))
+
+    contact_name = db.Column(db.String(200), nullable=False)
+    contact_address = db.Column(db.String(200), nullable=False)
+    contact_tel = db.Column(db.String(20), nullable=False)
+
+    remarks = db.Column(db.String(200))
