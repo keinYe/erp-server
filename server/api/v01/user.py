@@ -96,18 +96,25 @@ class UserInfo(Resource):
         if not user:
             return jsonify({
                 'status': 0,
-                'message': "用户 id = " + id + "不存在！"
+                'message': "用户 id = " + str(id) + "不存在！"
             })
+        json = request.get_json(force=True)
         password = json['password']
         admin = json['admin']
-        user.password = password
+        active = json['active']
+        logger.info(json)
+        if password is not None:
+            user.password = password
         if admin:
             user.permission = Permission.ADMINISTRATOR
         else:
             user.permission = 0
+        if active is not None:
+            user.active = active
+        user.save()
         return jsonify({
-            'status': 0,
-            'message': "用户 id = " + id + "更新完成！"
+            'status': 1,
+            'message': "用户 id = " + str(id) + "更新完成！"
         })
 
     def delete(self, id):
@@ -115,13 +122,14 @@ class UserInfo(Resource):
         if not user:
             return jsonify({
                 'status': 0,
-                'message': "用户 id = " + id + "不存在！"
+                'message': "用户 id = " + str(id) + "不存在！"
             })
         if user.isActive():
             user.active = False
+        user.save()
         return jsonify({
-            'status': 0,
-            'message': "用户 id = " + id + "已删除！"
+            'status': 1,
+            'message': "用户 id = " + str(id) + "已删除！"
         })
 
 

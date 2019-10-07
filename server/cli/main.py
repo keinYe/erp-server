@@ -5,7 +5,7 @@ from server import create_app
 from flask.cli import FlaskGroup, ScriptInfo
 from server.module import db
 from sqlalchemy_utils import database_exists, create_database
-from server.models.user import User
+from server.models.user import User, Permission
 
 logger = logging.getLogger(__name__)
 
@@ -47,4 +47,8 @@ def install(username, password):
         create_database(db.engine.url)
     db.create_all(bind=None)
 
-    user = User.create(name=username, password=password, active=True)
+    user = User.create(
+        name=username,
+        password=password,
+        permission=Permission.ADMINISTRATOR,
+        active=True)
