@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from sqlalchemy import func
+from sqlalchemy import func, asc, desc
 from server.module import db, api, multi_auth
 from server.models.sales import SalesRecord, Agent, Contact
 from flask import g, jsonify, current_app, request
@@ -10,36 +10,21 @@ import time
 logger = logging.getLogger(__name__)
 
 class SalesList(Resource):
-    @multi_auth.login_required
+    decorators = [multi_auth.login_required]
     def post(slef):
         json = request.get_json(force=True)
         offset = int(json['offset']) if json['offset'] else 0
         limit = int(json['limit']) if json['limit'] else 20
-        records = SalesRecord.query.limit(limit).offset(offset)
-
-        list = []
-        for record in records:
-            list.append({
-                'id': record.id,
-                'number': record.number,
-                'date': record.date,
-                'model': record.model,
-                'quantity': record.quantity,
-                'applicant': record.applicant,
-                'agent_name': record.agent.name,
-                'contact_name': record.contact.name,
-                'contact_address': record.contact.address,
-                'contact_tel': record.contact.address,
-                'remarks': record.remarks
-            })
+        records = SalesRecord.query.order_by(desc(SalesRecord.id)).limit(limit).offset(offset)
+        count = db.session.query(func.count(SalesRecord.id)).scalar()
         return jsonify({
-            'record': list,
+            'record': [x.to_json() for x in records],
+            'count': count,
             'status': 1
         })
 
-
 class SalesAdd(Resource):
-    @multi_auth.login_required
+    decorators = [multi_auth.login_required]
     def post(self):
         json = request.get_json(force=True)
         number = json['number']
@@ -69,44 +54,33 @@ class SalesAdd(Resource):
         sales.model = json['model']
         sales.quantity = json['quantity']
         sales.remarks = json['remarks']
-        sales.agent = agent
-        salse.contact = contact
+        sales.agent_name = agent.name
+        salse.contact_name = contact.name
+        sales.contact_address = contact.address
+        sales.contact_tel = contact.tel
+        salse.operator = g.current_user.name
         salse.save()
         return jsonify({
-            'status': 1
+            'status': 1,
+            'message': '添加完成！'
         })
 
 class AgentList(Resource):
-    @multi_auth.login_required
+    decorators = [multi_auth.login_required]
     def post(self):
         json = request.get_json(force=True)
         offset = int(json['offset']) if json['offset'] else 0
         limit = int(json['limit']) if json['limit'] else 20
-        agents = Agent.query.limit(limit).offset(offset)
-        list = []
-        for agent in agents:
-            contacts = []
-            for contact in agent.contact:
-                contacts.append({
-                    'name': contact.name,
-                    'address': contact.address,
-                    'tel': contact.tel
-                })
-            list.append({
-                'id': agent.id,
-                'name': agent.name,
-                'address': agent.address,
-                'tel': agent.tel,
-                'fax': agent.fax,
-                'contact': contacts
-            })
+        agents = Agent.query.order_by(desc(Agent.id)).limit(limit).offset(offset)
+        count = db.session.query(func.count(Agent.id)).scalar()
         return jsonify({
-            'agent': list,
+            'agent': [x.to_json for x in agents],
+            'count': count,
             'status': 1
         })
 
 class AgentAdd(Resource):
-    @multi_auth.login_required
+    decorators = [multi_auth.login_required]
     def post(self):
         json = request.get_json(force=True)
         name = json['name']
@@ -119,7 +93,8 @@ class AgentAdd(Resource):
             agent.fax = json['fax']
             agent.save()
             return jsonify({
-                'status': 1
+                'status': 1,
+                'message': '新增代理商成功！'
             })
         return jsonify({
             'statue': 0,
@@ -127,28 +102,22 @@ class AgentAdd(Resource):
         })
 
 class AgentListContact(Resource):
-    @multi_auth.login_required
+    decorators = [multi_auth.login_required]
     def get(self, agent_id):
         if agent_id:
-            contacts = Contact.query.filter(Contact.agent_id == agent_id).all()
-            list = []
-            for contact in contacts:
-                list.append({
-                    'id': contact.id,
-                    'name': contact.name,
-                    'address': contact.address,
-                    'tel': contact.tel
-            })
+            contacts = Contact.query.filter(Contact.agent_id == agent_id).order_by(desc(Contact.id)).all()
             return jsonify({
-                'contact': list,
+                'contact': [x.to_json() for x in contacts],
                 'agent_id': agent_id,
                 'status': 1
             })
         return jsonify({
-            'status': 0
+            'status': 0,
+            'message': '代理商不存在'
         })
+
 class ContactAdd(Resource):
-    @multi_auth.login_required
+    decorators = [multi_auth.login_required]
     def post(self):
         json = request.get_json(force=True)
         agent_name = json['agent_name']

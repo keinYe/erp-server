@@ -93,16 +93,3 @@ def verify_token(token):
         return False
     g.current_user = user
     return True
-
-# @multi_auth.verify_password
-# def verify_password(username_or_token, password):
-#     # first try to authenticate by token
-#     user = User.verify_auth_token(username_or_token, current_app)
-#     logger.info('username:{} password:{}'.format(username_or_token, password))
-#     if not user:
-#         # try to authenticate with username/password
-#         user = User.query.filter_by(name = username_or_token).first()
-#         if not user or not user.check_password(password):
-#             return False
-#     g.current_user = user
-#     return True
