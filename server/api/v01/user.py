@@ -1,4 +1,4 @@
-
+# -*- coding:utf-8 -*-
 from flask_restful import Resource, reqparse
 from sqlalchemy import func
 from server.module import db, api
@@ -60,10 +60,9 @@ class UserList(Resource):
     def post(self):
         json = request.get_json(force=True)
         username = json['user_name']
-        password = json['password']
-        admin = json['admin']
-        user = User.query.filter_by(name=username).first()
-        if not user:
+        if User.query.filter_by(name==username).scalar() is None:
+            password = json['password']
+            admin = json['admin']
             user = User()
             user.name = username
             user.password = password

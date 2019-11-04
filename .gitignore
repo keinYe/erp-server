@@ -106,3 +106,4 @@ finally/
 module_test/
 database.conf
 *.sqlite
+*.cfg

@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from flask_restful import Resource, reqparse
 from sqlalchemy import func, asc, desc
 from server.module import db, api, multi_auth
@@ -39,14 +40,14 @@ class SalesAdd(Resource):
         if not agent:
             return jsonify({
                 'status': 0,
-                'message': "代理商: " + agent_name + " 不已存在！"
+                'message': "代理商: " + agent_name + " 不存在！"
             })
         contact_name = json['contact_name']
         contact = Contact.query.filter_by(name == contact_name).first()
         if not contact:
             return jsonify({
                 'status': 0,
-                'message': "代理商: " + contact_name + " 不已存在！"
+                'message': "代理商: " + contact_name + " 不存在！"
             })
 
         sales = SalesRecord()

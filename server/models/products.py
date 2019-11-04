@@ -13,7 +13,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Record(db.Model, CRUDMixin):
+class Receipt(db.Model, CRUDMixin):
     __tablename__ = 'receipt'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -32,6 +32,7 @@ class Record(db.Model, CRUDMixin):
             'in_out': self.inoutreceipt.in_out
         }
 
+# 出入库单数据表
 class InOutReceipt(db.Model, CRUDMixin):
     __tablename__ = 'inoutreceipt'
 
@@ -39,7 +40,7 @@ class InOutReceipt(db.Model, CRUDMixin):
     number = db.Column(db.String(20), unique=True)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     in_out = db.Column(db.Boolean, default=False)
-    record = db.relationship('Record', backref='inoutreceipt')
+    record = db.relationship('Receipt', backref='inoutreceipt')
 
     def to_json(self):
         return {
@@ -49,6 +50,7 @@ class InOutReceipt(db.Model, CRUDMixin):
             'in_out': self.in_out
         }
 
+# 物料/产品数据表
 class Product(db.Model, CRUDMixin):
     __tablename__ = 'product'
 
@@ -56,7 +58,7 @@ class Product(db.Model, CRUDMixin):
     number = db.Column(db.String(20), unique=True)
     name = db.Column(db.String(200), unique=True, nullable=False)
     model = db.Column(db.String(20), unique=True)
-    quantity = db.Column(db.Integer, unique=True, default=0)
+    _quantity = db.Column(db.Integer, unique=True, default=0)
 
     record = db.relationship('Record', backref='product')
 
@@ -66,16 +68,19 @@ class Product(db.Model, CRUDMixin):
             'number': self.number,
             'name': self.name,
             'model': self.model,
-            'quantity': self.quantity
+            'quantity': self._quantity
         }
 
     def increase(self, amount):
-        self.quantity = self.quantity + amount
+        self._quantity = self._quantity + amount
         self.save()
 
+    def inventory(self):
+        return self._quantity
+
     def reduce(self, amout):
-        if (self.quantity < amout):
+        if (self._quantity < amout):
             return False
-        self.quantity = self.quantity - amout
+        self._quantity = self._quantity - amout
         self.save()
         return True

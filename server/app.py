@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 def create_app(config=None):
     app = Flask(
-        'pycrawler', instance_relative_config=True, static_folder="templates"
+        'server', instance_relative_config=True
     )
     # cors = CORS(app, supports_credentials=True,resources={r"/api/*": {"origins": "*"}})
     cors = CORS(app, supports_credentials=True)

@@ -55,6 +55,7 @@ class Note(db.Model, CRUDMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     model = db.Column(db.String(50), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
+    receipt_id = db.Column(db.Integer)
     deliverynote_id = db.Column(db.Integer, db.ForeignKey('deliverynote.id'))
 
     def to_json(self):
@@ -62,15 +63,15 @@ class Note(db.Model, CRUDMixin):
             'id': self.id,
             'model': self.model,
             'quantity': self.quantity,
+            'receipt_id': self.receipt_id
         }
 
 class DeliveryNote(db.Model, CRUDMixin):
-    __tablename__ = 'deliverynote'å
+    __tablename__ = 'deliverynote'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nmuber = db.Column(db.String(20), unique=True, nullable=False)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     salesrecord_number = db.Column(db.String(20), nullable=False)
-    out_receipt_number = db.Column(db.String(20), nullable=False)
     note = db.relationship('Note', backref='deliverynote.id')
 
     def to_json(slef):
@@ -79,7 +80,6 @@ class DeliveryNote(db.Model, CRUDMixin):
             'number': self.number,
             'date': format_date(self.date),
             'salesrecord_number': self.salesrecord_number,
-            'out_receipt_number': self.out_receipt_number,
             'note': [x.to_json() for x in self.note]
         }
 
