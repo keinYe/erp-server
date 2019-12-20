@@ -67,12 +67,30 @@ class Note(db.Model, CRUDMixin):
         }
 
 class DeliveryNote(db.Model, CRUDMixin):
+    '''
+    送货单数据类
+
+    Attributes:
+        id: 唯一标识 ID。
+        number: 送货单编号「唯一」。
+        date: 送货单生成日期。
+        salesrecord_number: 关联的销售单的编号。
+        note: 单据中所含有的物料信息，关联至 Note 数据类。
+        operator: 单据生成人员。
+        remarks: 备注内容。
+
+    Methods:
+        to_json : 将数据表中的列转换为 json 格式。
+    '''
     __tablename__ = 'deliverynote'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nmuber = db.Column(db.String(20), unique=True, nullable=False)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     salesrecord_number = db.Column(db.String(20), nullable=False)
     note = db.relationship('Note', backref='deliverynote.id')
+    # 操作员
+    operator = db.Column(db.String(20), nullable=False)
+    remarks = db.Column(db.String(200))
 
     def to_json(slef):
         return {
@@ -80,10 +98,20 @@ class DeliveryNote(db.Model, CRUDMixin):
             'number': self.number,
             'date': format_date(self.date),
             'salesrecord_number': self.salesrecord_number,
-            'note': [x.to_json() for x in self.note]
+            'note': [x.to_json() for x in self.note],
+            'operator': self.operator,
+            'remarks': self.remarks
         }
 
 class SalesRecord(db.Model, CRUDMixin):
+    """
+    销售单数据类
+
+    Attributes:
+
+    Method:
+        to_json : 将数据表中的列转换为 json 格式。
+    """
     __tablename__ = 'salesrecord'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

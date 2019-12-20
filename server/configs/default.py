@@ -52,7 +52,7 @@ class DefaultConfig(object):
                 'level': 'INFO',
                 'formatter': 'standard',
                 'class': 'logging.handlers.RotatingFileHandler',
-                'filename': os.path.join(LOG_PATH, 'mdpms.log'),
+                'filename': os.path.join(LOG_PATH, 'server.log'),
                 'mode': 'a',
                 'maxBytes': 10485760,  # 10MB
                 'backupCount': 5,
