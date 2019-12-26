@@ -60,7 +60,7 @@ class Product(db.Model, CRUDMixin):
     model = db.Column(db.String(20), unique=True)
     _quantity = db.Column(db.Integer, unique=True, default=0)
 
-    record = db.relationship('Record', backref='product')
+    record = db.relationship('Receipt', backref='product')
 
     def to_json(self):
         return {

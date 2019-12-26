@@ -60,7 +60,7 @@ class UserList(Resource):
     def post(self):
         json = request.get_json(force=True)
         username = json['user_name']
-        if User.query.filter_by(name==username).scalar() is None:
+        if User.query.filter_by(name=username).scalar() is None:
             password = json['password']
             admin = json['admin']
             user = User()

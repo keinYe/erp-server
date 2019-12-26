@@ -30,7 +30,10 @@ def create_app(config=None):
     return app
 
 def config_app(app, config):
-    app.config.from_object("server.configs.default.DefaultConfig")
+    if config is None:
+        app.config.from_object("server.configs.default.DefaultConfig")
+    else:
+        app.config.update(config)
 
     configure_logging(app)
 
