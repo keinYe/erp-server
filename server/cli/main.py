@@ -81,6 +81,8 @@ def server(ctx):
 @click.option("--username", "-u", default='test', help="The username of the user.")
 @click.option("--password", "-p", default='test', help="The password of the user.")
 def install(username, password):
+    if not database_exists(db.engine.url):
+        create_database(db.engine.url)
     if database_exists(db.engine.url):
         user = User.create(
             name=username,

@@ -116,3 +116,5 @@ class DefaultConfig(object):
 
     SECRET_KEY = 'ijkaumadidihiihddd'
     TOKEN_EXPIRE = 60 * 60 * 24
+
+    REDIS_URL = 'redis://localhost:6379/0'

@@ -10,6 +10,8 @@ import logging
 import datetime
 import time
 from flask_cors import cross_origin
+from server.utils import mark_dyn_data, get_dyn_data
+
 logger = logging.getLogger(__name__)
 
 list_parser = reqparse.RequestParser()
@@ -48,7 +50,7 @@ class UserList(Resource):
     def get(self):
         offset = int(request.args['offset']) if request.args['offset'] else 0
         limit = int(request.args['limit']) if request.args['limit'] else 20
-        users = db.session.query(User).order_by(desc(User.id)).limit(limit).offset(offset)
+        users = User.query.order_by(desc(User.id)).limit(limit).offset(offset)
         count = db.session.query(func.count(User.id)).scalar()
 
         return jsonify ({
@@ -132,7 +134,44 @@ class UserInfo(Resource):
             'message': "用户 id = " + str(id) + "已删除！"
         })
 
+class DynData(Resource):
+    decorators = [multi_auth.login_required]
+
+    def get(self):
+        user = g.current_user
+        if not user:
+            return jsonify({
+                'status': 0,
+                'message': "用户不存在"
+            })
+        data = get_dyn_data(user.id)
+        return jsonify({
+                'status': 1,
+                'message': "数据获取完成",
+                'data': data
+        })
+
+    def post(self):
+        user = g.current_user
+        if not user:
+            return jsonify({
+                'status': 0,
+                'message': "用户不存在"
+            })
+        json = request.get_json(force=True)
+        data = json.get('data', None)
+        if not data:
+            return jsonify({
+                'status': 0,
+                'message': "数据不存在"
+            })
+        mark_dyn_data(user.id, data)
+        return jsonify({
+                'status': 1,
+                'message': "数据更新完成"
+        })
 
 api.add_resource(UserInfo, '/api/v01/user/<int:id>')
 api.add_resource(UserLogin, '/api/v01/user/login')
 api.add_resource(UserList, '/api/v01/user')
+api.add_resource(DynData, '/api/v01/dyn')

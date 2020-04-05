@@ -5,14 +5,18 @@ import logging
 import logging.config
 from server.models.user import User
 from ._compat import iteritems
-import sys
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+import sys, time
 from .module import (
     db,
     api,
     basic_auth,
     token_auth,
     migrate,
+    redis_client,
 )
+
 
 from flask_cors import CORS
 
@@ -46,6 +50,8 @@ def configure_module(app):
 
     migrate.init_app(app, db)
 
+    redis_client.init_app(app)
+
 def configure_logging(app):
     """Configures logging."""
     if app.config.get("USE_DEFAULT_LOGGING"):
@@ -75,8 +81,6 @@ def configure_logging(app):
 def configure_default_logging(app):
     # Load default logging config
     logging.config.dictConfig(app.config["LOG_DEFAULT_CONF"])
-    if app.config["SEND_LOGS"]:
-        configure_mail_logs(app)
 
 @basic_auth.verify_password
 def verify_password(username, password):

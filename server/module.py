@@ -5,7 +5,7 @@ from sqlalchemy import MetaData
 from flask_restful import Api
 from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth, MultiAuth
 from flask_migrate import Migrate
-
+from flask_redis import FlaskRedis
 
 metadata = MetaData(
     naming_convention={
@@ -24,3 +24,5 @@ token_auth = HTTPTokenAuth('Bearer')
 multi_auth = MultiAuth(basic_auth, token_auth)
 
 migrate = Migrate()
+
+redis_client = FlaskRedis()
