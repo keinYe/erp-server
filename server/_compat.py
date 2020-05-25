@@ -5,6 +5,7 @@ https://github.com/mitsuhiko/flask/blob/master/flask/_compat.py
 
 import sys
 
+
 PY2 = sys.version_info[0] == 2
 
 if not PY2:  # pragma: no cover

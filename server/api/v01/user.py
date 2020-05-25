@@ -51,7 +51,8 @@ class UserList(Resource):
         offset = int(request.args['offset']) if request.args['offset'] else 0
         limit = int(request.args['limit']) if request.args['limit'] else 20
         users = User.query.order_by(desc(User.id)).limit(limit).offset(offset)
-        count = db.session.query(func.count(User.id)).scalar()
+        count = User.with_entities(func.count(User.id)).scalar()
+        # count = User.query(func.count(User.id)).scalar()
 
         return jsonify ({
             'count': count,

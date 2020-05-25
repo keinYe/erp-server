@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 import logging
-from server.database import CRUDMixin
-from server.module import db
+from server.database import BaseModel
 import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -10,6 +9,15 @@ from flask_login import UserMixin
 from flask import current_app
 from server.template_filter import format_date
 import logging
+from sqlalchemy import (
+    Integer,
+    Column,
+    String,
+    DateTime,
+    Boolean,
+)
+from sqlalchemy.orm import synonym
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,16 +35,16 @@ class Permission:
     ADMINISTRATOR   = 0b11111111
 
 
-class User(db.Model, UserMixin, CRUDMixin):
+class User(BaseModel, UserMixin):
     __tablename__ = 'user'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(200), unique=True, nullable=False)
-    _password = db.Column(db.String(200), nullable=False)
-    create_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    department = db.Column(db.Integer, default=0)
-    permission = db.Column(db.Integer, default=0)
-    active = db.Column(db.Boolean, default=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(200), unique=True, nullable=False)
+    _password = Column(String(200), nullable=False)
+    create_date = Column(DateTime, default=datetime.datetime.utcnow)
+    department = Column(Integer, default=0)
+    permission = Column(Integer, default=0)
+    active = Column(Boolean, default=False)
 
     def _get_password(self):
         """Returns the hashed password."""
@@ -49,7 +57,7 @@ class User(db.Model, UserMixin, CRUDMixin):
         self._password = generate_password_hash(password)
 
     # Hide password encryption by exposing password field only.
-    password = db.synonym('_password',
+    password = synonym('_password',
                           descriptor=property(_get_password,
                                               _set_password))
 
