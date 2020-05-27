@@ -6,12 +6,19 @@ from server.database import BaseModel
 # successful
 OK = 0
 
+# error
+ID_NOT_EXIST        = 10001
+ID_ERROR            = 10002
+PARAM_ERROR         = 10003
 # other
 UNKNOWN             = 20001
 
 message = {
-    OK      : '请求成功',
-    UNKNOWN : '未知错误'
+    OK              : '请求成功',
+    ID_NOT_EXIST    : 'ID 不存在',
+    ID_ERROR        : 'ID 错误',
+    PARAM_ERROR     : '参数错误',
+    UNKNOWN         : '未知错误'
 }
 
 def create_response(code, count=0, data=None, show=None, _hide=[], _path=None):
