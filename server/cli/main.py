@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 import binascii
-import click, logging, os
+import click, logging, os, sys
 from datetime import datetime
 from server import create_app
 from flask.cli import FlaskGroup, ScriptInfo
@@ -84,11 +84,16 @@ def install(username, password):
     if not database_exists(db.engine.url):
         create_database(db.engine.url)
     if database_exists(db.engine.url):
-        user = User.create(
-            name=username,
-            password=password,
-            permission=Permission.ADMINISTRATOR,
-            active=True)
+        user = User.query.filter_by(name=username).one()
+        if user:
+            user.password = password
+        else:
+            user = User.create(
+                name=username,
+                password=password,
+                permission=Permission.ADMINISTRATOR,
+                active=True)
+        user.save()
     else:
         click.secho("User table does not exists, please create User table!")
 

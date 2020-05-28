@@ -10,6 +10,11 @@ OK = 0
 ID_NOT_EXIST        = 10001
 ID_ERROR            = 10002
 PARAM_ERROR         = 10003
+NAME_PASS_ERROR     = 10004
+USER_NO_ACTIVE      = 10005
+USER_EXIST          = 10006
+USER_NO_EXIST       = 10007
+DATA_NO_EXIST       = 10008
 # other
 UNKNOWN             = 20001
 
@@ -18,6 +23,11 @@ message = {
     ID_NOT_EXIST    : 'ID 不存在',
     ID_ERROR        : 'ID 错误',
     PARAM_ERROR     : '参数错误',
+    NAME_PASS_ERROR : '用户名或密码错误',
+    USER_NO_ACTIVE  : '用户未激活',
+    USER_EXIST      : '用户已存在',
+    USER_NO_EXIST   : '用户不存在',
+    DATA_NO_EXIST   : '数据不存在',
     UNKNOWN         : '未知错误'
 }
 

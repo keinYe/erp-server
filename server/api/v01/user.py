@@ -4,6 +4,7 @@ from sqlalchemy import func
 from server.module import db, api
 from server.models.user import User, Permission
 from server.module import multi_auth
+from server.api import result
 from sqlalchemy import asc, desc
 from flask import g, jsonify, current_app, request
 import logging
@@ -26,24 +27,18 @@ class UserLogin(Resource):
         password = json['password']
         user = User.query.filter_by(name=username).first()
         if not user or not user.check_password(password):
-            return jsonify({
-                'status': 0,
-                'message': '用户名或密码错误！'
-            })
+            return result.create_response(result.NAME_PASS_ERROR)
         if not user.isActive():
-            return jsonify({
-                'status': 0,
-                'message': '用户未激活，请与管理员联系！'
-            })
+            return result.create_response(result.USER_NO_ACTIVE)
         token = user.generate_auth_token(app=current_app, expiration=current_app.config['TOKEN_EXPIRE'])
         expire = time.mktime(datetime.datetime.now().timetuple()) + current_app.config['TOKEN_EXPIRE']
-        return jsonify({
+        return result.create_response(result.OK, {
             'token': token.decode('utf-8'),
             'expire': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(expire)),
             'admin': user.check_permission(Permission.ADMINISTRATOR),
             'name': user.name,
             'status': 1
-        })
+        }) 
 
 class UserList(Resource):
     decorators = [multi_auth.login_required]
@@ -54,10 +49,9 @@ class UserList(Resource):
         count = User.with_entities(func.count(User.id)).scalar()
         # count = User.query(func.count(User.id)).scalar()
 
-        return jsonify ({
+        return result.create_response (result.OK, {
             'count': count,
             'users': [x.to_json() for x in users],
-            'status': 1
         })
 
     def post(self):
@@ -72,35 +66,23 @@ class UserList(Resource):
             if admin:
                 user.permission = Permission.ADMINISTRATOR
             user.save()
-            return jsonify({
-                'status': 1
-            })
-        return jsonify({
-            'status': 0,
-            'message': "用户名: " + username + " 已存在！"
-        })
+            return result.create_response(result.OK, user)
+        return result.create_response(result.USER_EXIST)
 
 
 class UserInfo(Resource):
     decorators = [multi_auth.login_required]
+
     def get(self, id):
         user = User.query.filter(User.id == id).first()
         if user:
-            return jsonify({
-                'status': 1,
-                'user': user.to_json()
-            })
-        return jsonify({
-            'status': 0,
-            'message': "用户 id = " + id + "不存在！"
-        })
+            return result.create_response(result.OK, user)
+        return result.create_response(result.USER_NO_EXIST)
+
     def put(self, id):
         user = User.query.filter(User.id == id).first()
         if not user:
-            return jsonify({
-                'status': 0,
-                'message': "用户 id = " + str(id) + "不存在！"
-            })
+            return result.create_response(result.USER_NO_EXIST)
         json = request.get_json(force=True)
         password = json['password']
         admin = json['admin']
@@ -115,25 +97,16 @@ class UserInfo(Resource):
         if active is not None:
             user.active = active
         user.save()
-        return jsonify({
-            'status': 1,
-            'message': "用户 id = " + str(id) + "更新完成！"
-        })
+        return result.create_response(result.OK, user)
 
     def delete(self, id):
         user = User.query.filter(User.id == id).first()
         if not user:
-            return jsonify({
-                'status': 0,
-                'message': "用户 id = " + str(id) + "不存在！"
-            })
+            return result.create_response(result.USER_NO_EXIST)
         if user.isActive():
             user.active = False
         user.save()
-        return jsonify({
-            'status': 1,
-            'message': "用户 id = " + str(id) + "已删除！"
-        })
+        return result.create_response(result.OK)
 
 class DynData(Resource):
     decorators = [multi_auth.login_required]
@@ -141,36 +114,20 @@ class DynData(Resource):
     def get(self):
         user = g.current_user
         if not user:
-            return jsonify({
-                'status': 0,
-                'message': "用户不存在"
-            })
+            return result.create_response(result.USER_NO_EXIST)
         data = get_dyn_data(user.id)
-        return jsonify({
-                'status': 1,
-                'message': "数据获取完成",
-                'data': data
-        })
+        return result.create_response(result.OK, data)
 
     def post(self):
         user = g.current_user
         if not user:
-            return jsonify({
-                'status': 0,
-                'message': "用户不存在"
-            })
+            return result.create_response(result.USER_NO_EXIST)
         json = request.get_json(force=True)
         data = json.get('data', None)
         if not data:
-            return jsonify({
-                'status': 0,
-                'message': "数据不存在"
-            })
+            return result.create_response(result.DATA_NO_EXIST)
         mark_dyn_data(user.id, data)
-        return jsonify({
-                'status': 1,
-                'message': "数据更新完成"
-        })
+        return result.create_response(result.OK)
 
 api.add_resource(UserInfo, '/api/v01/user/<int:id>')
 api.add_resource(UserLogin, '/api/v01/user/login')
