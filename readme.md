@@ -1,3 +1,7 @@
+[![Build Status](https://dev.azure.com/yekexinh/erp-server/_apis/build/status/yekexinh.erp-server?branchName=master)](https://dev.azure.com/yekexinh/erp-server/_build/latest?definitionId=1&branchName=master)
+[![License](https://img.shields.io/badge/license-BSD-blue.svg)]()
+
+
 该项目的目的是建立一个简易的生产物料管理系统，将包含以下内容：
 1. 生产物料信息
    * 基础信息「包括本地编号、厂家编号、描述信息等」
