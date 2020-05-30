@@ -30,15 +30,13 @@ steps:
     pip install pytest-azurepipelines
     pip install -r requirements-dev.txt
   displayName: Install dependencies
-- script: erp-server translations compile
-  displayName: Prepare erp-server
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '$(python.version)'
     addToPath: true
     architecture: 'x64'
 
-- script: tox -- --junitxml=test-results.xml
+- script: tox --junitxml=test-results.xml
   displayName: Run tox
   env:
     # Can't define in section 'variables' due it being a secret one
