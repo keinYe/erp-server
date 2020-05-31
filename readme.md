@@ -1,5 +1,5 @@
 
-[![Build Status](https://dev.azure.com/yekexinh/erp-server/_apis/build/status/keinYe.erp-server?branchName=master)](https://dev.azure.com/yekexinh/erp-server/_build/latest?definitionId=1&branchName=master)
+![Python package](https://github.com/keinYe/erp-server/workflows/Python%20package/badge.svg)
 [![codecov](https://codecov.io/gh/keinYe/erp-server/branch/master/graph/badge.svg)](https://codecov.io/gh/keinYe/erp-server)
 [![License](https://img.shields.io/badge/license-BSD-blue.svg)](https://codecov.io/gh/keinYe/erp-server)
 
