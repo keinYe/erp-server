@@ -45,7 +45,7 @@ class UserList(Resource):
         offset = int(request.args['offset']) if request.args['offset'] else 0
         limit = int(request.args['limit']) if request.args['limit'] else 20
         users = User.query.order_by(desc(User.id)).limit(limit).offset(offset)
-        count = User.with_entities(func.count(User.id)).scalar()
+        count = User.query.with_entities(func.count(User.id)).scalar()
         # count = User.query(func.count(User.id)).scalar()
 
         return result.create_response (result.OK, {
@@ -131,4 +131,4 @@ class DynData(Resource):
 api.add_resource(UserInfo, '/api/v01/user/<int:id>')
 api.add_resource(UserLogin, '/api/v01/user/login')
 api.add_resource(UserList, '/api/v01/user')
-api.add_resource(DynData, '/api/v01/dyn')
+api.add_resource(DynData, '/api/v01/user/dyn')

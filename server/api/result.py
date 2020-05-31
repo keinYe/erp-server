@@ -50,7 +50,7 @@ def create_response(code, data=None, show=None, _hide=[], _path=None):
             return jsonify({
                 'error_code': UNKNOWN,
                 'message': message.get(UNKNOWN, '未知错误'),
-                'data': {}
+                'data': data
             })
 
     return jsonify({
