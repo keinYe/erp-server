@@ -109,5 +109,11 @@ def test_post_user_dyn(clinet, headers):
     result = json.loads(rv.data)
     assert result['error_code'] == 10008
 
-
+    
+    rv = clinet.post('/api/v01/user/dyn',
+                    data=json.dumps(dict(data=100)),
+                    headers=headers)
+    assert rv.status_code == 200
+    result = json.loads(rv.data)
+    assert result['error_code'] == 0
     
