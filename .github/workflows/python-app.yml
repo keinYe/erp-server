@@ -24,10 +24,12 @@ jobs:
       - name: Install Tox and any other packages
         run: pip install tox
 
-      - name: Run Tox
+      - name: Start Redis
         uses: supercharge/redis-github-action@1.1.0
         with:
           redis-version: ${{ matrix.redis-version }}
+
+      - name: Run Tox
         # Run tox using the version of Python in `PATH`
         run: tox -- --junitxml=test-results.xml
         env:
