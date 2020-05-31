@@ -107,3 +107,4 @@ module_test/
 database.conf
 *.sqlite
 *.cfg
+test-*.xml
