@@ -1,4 +1,5 @@
 [![Build Status](https://dev.azure.com/yekexinh/erp-server/_apis/build/status/yekexinh.erp-server?branchName=master)](https://dev.azure.com/yekexinh/erp-server/_build/latest?definitionId=1&branchName=master)
+[![codecov](https://codecov.io/gh/keinYe/erp-server/branch/master/graph/badge.svg)](https://codecov.io/gh/keinYe/erp-server)
 [![License](https://img.shields.io/badge/license-BSD-blue.svg)]()
 
 

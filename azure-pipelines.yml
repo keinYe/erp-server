@@ -56,6 +56,3 @@ steps:
     summaryFileLocation: coverage.xml
   condition: succeededOrFailed()
 
-- script: |
-    bash <(curl -s https://codecov.io/bash)
-  displayName: 'Upload to codecov.io'

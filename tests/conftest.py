@@ -45,7 +45,9 @@ def headers(app, clinet):
     rv = clinet.post('/api/v01/user/login',
                         data=json.dumps(dict(user_name='test', password='test')),
                         content_type='application/json')
-    data = json.loads(rv.data)
+    result = json.loads(rv.data)
+    assert result['error_code'] == 0
+    data = result['data']
     token = data['token']
     headers = {"Authorization":"Bearer "+token, 'Content-Type': 'application/json'}
 

@@ -36,8 +36,7 @@ class UserLogin(Resource):
             'token': token.decode('utf-8'),
             'expire': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(expire)),
             'admin': user.check_permission(Permission.ADMINISTRATOR),
-            'name': user.name,
-            'status': 1
+            'name': user.name
         }) 
 
 class UserList(Resource):

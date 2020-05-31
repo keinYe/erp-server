@@ -31,7 +31,7 @@ message = {
     UNKNOWN         : '未知错误'
 }
 
-def create_response(code, count=0, data=None, show=None, _hide=[], _path=None):
+def create_response(code, data=None, show=None, _hide=[], _path=None):
     if data:
         if isinstance(data, BaseModel) and hasattr(data, 'to_dict'):
             to_dict = getattr(data, 'to_dict')
