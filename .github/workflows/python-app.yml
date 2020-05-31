@@ -24,3 +24,8 @@ jobs:
       - name: Run Tox
         # Run tox using the version of Python in `PATH`
         run: tox -- --junitxml=test-results.xml
+        env:
+          TOXENV: py,coverage-ci
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+

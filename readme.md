@@ -1,6 +1,7 @@
-[![Build Status](https://dev.azure.com/yekexinh/erp-server/_apis/build/status/yekexinh.erp-server?branchName=master)](https://dev.azure.com/yekexinh/erp-server/_build/latest?definitionId=1&branchName=master)
+
+[![Build Status](https://dev.azure.com/yekexinh/erp-server/_apis/build/status/keinYe.erp-server?branchName=master)](https://dev.azure.com/yekexinh/erp-server/_build/latest?definitionId=1&branchName=master)
 [![codecov](https://codecov.io/gh/keinYe/erp-server/branch/master/graph/badge.svg)](https://codecov.io/gh/keinYe/erp-server)
-[![License](https://img.shields.io/badge/license-BSD-blue.svg)]()
+[![License](https://img.shields.io/badge/license-BSD-blue.svg)](https://codecov.io/gh/keinYe/erp-server)
 
 
 该项目的目的是建立一个简易的生产物料管理系统，将包含以下内容：
