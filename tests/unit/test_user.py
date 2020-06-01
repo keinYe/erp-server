@@ -117,7 +117,7 @@ def test_user_dyn(clinet, headers):
     result = json.loads(rv.data)
     assert result['error_code'] == 0
     
-    rv = clinet.get('/api/v01/usr/dyn',
+    rv = clinet.get('/api/v01/user/dyn',
                     headers=headers)
     assert rv.status_code == 200
     result = json.loads(rv.data)
