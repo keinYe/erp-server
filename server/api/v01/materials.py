@@ -22,7 +22,7 @@ class Categorys(Resource):
         offset = int(request.args['offset']) if request.args['offset'] else 0
         limit = int(request.args['limit']) if request.args['limit'] else 20
         categorys = Category.query.order_by(desc(Category.id)).limit(limit).offset(offset)
-        count = Category.with_entities(func.count(Category.id)).scalar()
+        count = Category.query.with_entities(func.count(Category.id)).scalar()
         return result.create_response(result.OK, {
             'count': count,
             'category': [x.to_dict() for x in categorys]
@@ -32,7 +32,7 @@ class Categorys(Resource):
         json = request.get_json(force=True)
         name = json.get('name', None)
         if name is None:
-            return result.create_response(result.PARAM_ERROR)
+            return result.create_response(result.DATA_NO_EXIST)
         category = Category()
         category.name = name
         category.save()
@@ -42,20 +42,19 @@ class CategoryInfo(Resource):
     decorators = [multi_auth.login_required]
 
     def get(self, id):
-        category = Category.query.order_by(id=id).one()
+        category = Category.query.filter_by(id=id).first()
         if category is None:
             return result.create_response(result.ID_NOT_EXIST)
         return result.create_response(result.OK, category)
 
     def post(self, id):
-        category = Category.query.order_by(id=id).one()
+        category = Category.query.filter_by(id=id).first()
         if category is None:
             return result.create_response(result.ID_NOT_EXIST)   
         json = request.get_json(force=True)
         name = json.get('name', None)
         if name is None:
-            return result.create_response(result.PARAM_ERROR)
-        category = Category()
+            return result.create_response(result.DATA_NO_EXIST)
         category.name = name
         category.save()
         return result.create_response(result.OK, category)                    
@@ -68,7 +67,7 @@ class Manufacturers(Resource):
         offset = int(request.args['offset']) if request.args['offset'] else 0
         limit = int(request.args['limit']) if request.args['limit'] else 20
         manufactures = Manufacturer.query.order_by(desc(Manufacturer.id)).limit(limit).offset(offset)
-        count = Manufacturer.with_entities(func.count(Manufacturer.id)).scalar()
+        count = Manufacturer.query.with_entities(func.count(Manufacturer.id)).scalar()
         return result.create_response(result.OK, {
             'count': count,
             'manufacturer': [x.to_dict() for x in manufactures]
@@ -78,7 +77,7 @@ class Manufacturers(Resource):
         json = request.get_json(force=True)
         name = json.get('name', None)
         if name is None:
-            return result.create_response(result.PARAM_ERROR)
+            return result.create_response(result.DATA_NO_EXIST)
         manufacturer = Manufacturer()
         manufacturer.name = name
         manufacturer.save()
@@ -88,19 +87,19 @@ class ManufacturerInfo(Resource):
     decorators = [multi_auth.login_required]
 
     def get(self, id):
-        manufacturer = Manufacturer.query.order_by(id=id).one()
+        manufacturer = Manufacturer.query.filter_by(id=id).first()
         if not manufacturer:
             return result.create_response(result.ID_NOT_EXIST)
         return result.create_response(result.OK, manufacturer)
 
     def post(self, id):
-        manufacturer = Manufacturer.query.order_by(id=id).one()
+        manufacturer = Manufacturer.query.filter_by(id=id).first()
         if not manufacturer:
             return result.create_response(result.ID_NOT_EXIST)
         json = request.get_json(force=True)
         name = json.get('name', None)
         if name is None:
-            return result.create_response(result.PARAM_ERROR)
+            return result.create_response(result.DATA_NO_EXIST)
         manufacturer.name = name
         manufacturer.save()
         return result.create_response(result.OK, manufacturer)
@@ -113,7 +112,7 @@ class Materials(Resource):
         offset = int(request.args['offset']) if request.args['offset'] else 0
         limit = int(request.args['limit']) if request.args['limit'] else 20
         materials = Material.order_by(desc(Material.id)).limit(limit).offset(offset)
-        count = Material.with_entities(func.count(Material.id)).scalar()
+        count = Material.query.with_entities(func.count(Material.id)).scalar()
         return result.create_response(result.OK, {
             'count': count,
             'materials': [x.to_dict() for x in materials]
@@ -127,11 +126,11 @@ class Materials(Resource):
         category_id = json.get('category_id', None)
         manufacturer_id = json.get('manufacturer_id', None)
         if not serial or not manu_serial or not desc or not category_id or not manufacturer_id:
-            return result.create_response(result.PARAM_ERROR)
-        category = Category.query.order_by(id=category_id).one()
-        manufacturer = Manufacturer.query.order_by(id=manufacturer_id).one()
+            return result.create_response(result.DATA_NO_EXIST)
+        category = Category.query.filter_by(id=category_id).first()
+        manufacturer = Manufacturer.query.filter_by(id=manufacturer_id).first()
         if not category or not manufacturer:
-            return result.create_response(result.PARAM_ERROR)
+            return result.create_response(result.DATA_NO_EXIST)
         material = Material()
         material.serial = serial
         material.manu_serial = manu_serial
@@ -145,13 +144,13 @@ class MaterialInfo(Resource):
     decorators = [multi_auth.login_required]
 
     def get(self, id):
-        material = Material.query.filter_by(id=id).one()
+        material = Material.query.filter_by(id=id).first()
         if not material:
             return result.create_response(result.ID_NOT_EXIST)
         return result.create_response(result.OK, material)
 
     def post(self, id):
-        material = Material.query.filter_by(id=id).one()
+        material = Material.query.filter_by(id=id).first()
         if not material:
             return result.create_response(result.ID_NOT_EXIST)
         json = request.get_json(force=True)
@@ -160,8 +159,8 @@ class MaterialInfo(Resource):
         material.desc = json.get('desc') if json.get('desc', None) else material.desc
         category_id = json.get('category_id', None)
         manufacturer_id = json.get('manufacturer_id', None)
-        category = Category.query.order_by(id=category_id).one()
-        manufacturer = Manufacturer.query.order_by(id=manufacturer_id).one()
+        category = Category.query.order_by(id=category_id).first()
+        manufacturer = Manufacturer.query.order_by(id=manufacturer_id).first()
         if category:
             material.category = category
         if manufacturer:

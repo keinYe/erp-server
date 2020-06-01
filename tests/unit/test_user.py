@@ -71,7 +71,7 @@ def test_add_user_exist(clinet, headers):
     assert result['error_code'] == 10006
 
 def test_get_user_list(clinet, headers):
-    rv = clinet.get('/api/v01/user?offset=20&limit=20',
+    rv = clinet.get('/api/v01/user?offset=0&limit=20',
                     headers=headers)
     
     assert rv.status_code == 200
@@ -96,7 +96,7 @@ def test_get_user_from_id_no_exist(clinet, headers):
     assert result['error_code'] == 10007
 
 
-def test_post_user_dyn(clinet, headers):
+def test_user_dyn(clinet, headers):
     rv = clinet.post('/api/v01/user/dyn',
                     data=json.dumps(dict(data=100)),
                     content_type='application/json')
@@ -117,3 +117,8 @@ def test_post_user_dyn(clinet, headers):
     result = json.loads(rv.data)
     assert result['error_code'] == 0
     
+    rv = clinet.get('/api/v01/usr/dyn',
+                    headers=headers)
+    assert rv.status_code == 200
+    result = json.loads(rv.data)
+    assert result['data'] == 100
