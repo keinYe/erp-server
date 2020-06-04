@@ -33,6 +33,9 @@ class Categorys(Resource):
         name = json.get('name', None)
         if name is None:
             return result.create_response(result.DATA_NO_EXIST)
+        category = Category.query.filter_by(name=name).first()
+        if category:
+            return result.create_response(result.DATA_IS_EXIST)
         category = Category()
         category.name = name
         category.save()
@@ -78,6 +81,9 @@ class Manufacturers(Resource):
         name = json.get('name', None)
         if name is None:
             return result.create_response(result.DATA_NO_EXIST)
+        manufacturer = Manufacturer.query.filter_by(name=name).first()
+        if manufacturer:
+            return result.create_response(result.DATA_IS_EXIST)
         manufacturer = Manufacturer()
         manufacturer.name = name
         manufacturer.save()
@@ -111,7 +117,7 @@ class Materials(Resource):
     def get(self):
         offset = int(request.args['offset']) if request.args['offset'] else 0
         limit = int(request.args['limit']) if request.args['limit'] else 20
-        materials = Material.order_by(desc(Material.id)).limit(limit).offset(offset)
+        materials = Material.query.order_by(desc(Material.id)).limit(limit).offset(offset)
         count = Material.query.with_entities(func.count(Material.id)).scalar()
         return result.create_response(result.OK, {
             'count': count,
@@ -131,6 +137,9 @@ class Materials(Resource):
         manufacturer = Manufacturer.query.filter_by(id=manufacturer_id).first()
         if not category or not manufacturer:
             return result.create_response(result.DATA_NO_EXIST)
+        material = Material.query.filter_by(serial=serial).first()
+        if material:
+            return result.create_response(result.DATA_IS_EXIST)
         material = Material()
         material.serial = serial
         material.manu_serial = manu_serial
@@ -159,20 +168,20 @@ class MaterialInfo(Resource):
         material.desc = json.get('desc') if json.get('desc', None) else material.desc
         category_id = json.get('category_id', None)
         manufacturer_id = json.get('manufacturer_id', None)
-        category = Category.query.order_by(id=category_id).first()
-        manufacturer = Manufacturer.query.order_by(id=manufacturer_id).first()
+        category = Category.query.filter_by(id=category_id).first()
+        manufacturer = Manufacturer.query.filter_by(id=manufacturer_id).first()
         if category:
             material.category = category
         if manufacturer:
             material.manufacturer = manufacturer
-        manufacturer.save()     
+        material.save()     
         return result.create_response(result.OK, material)
 
 
 api.add_resource(Categorys, '/api/v01/categorys')
 api.add_resource(CategoryInfo, '/api/v01/categorys/<int:id>')
-api.add_resource(Manufacturers, '/api/v01/manufactrures')
-api.add_resource(ManufacturerInfo, '/api/v01/manufactrures/<int:id>')
+api.add_resource(Manufacturers, '/api/v01/manufacturer')
+api.add_resource(ManufacturerInfo, '/api/v01/manufacturer/<int:id>')
 api.add_resource(Materials, '/api/v01/materials')
 api.add_resource(MaterialInfo, '/api/v01/materials/<int:id>')
 

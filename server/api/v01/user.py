@@ -46,8 +46,6 @@ class UserList(Resource):
         limit = int(request.args['limit']) if request.args['limit'] else 20
         users = User.query.order_by(desc(User.id)).limit(limit).offset(offset)
         count = User.query.with_entities(func.count(User.id)).scalar()
-        # count = User.query(func.count(User.id)).scalar()
-
         return result.create_response (result.OK, {
             'count': count,
             'users': [x.to_json() for x in users],

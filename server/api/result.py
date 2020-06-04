@@ -15,6 +15,7 @@ USER_NO_ACTIVE      = 10005
 USER_EXIST          = 10006
 USER_NO_EXIST       = 10007
 DATA_NO_EXIST       = 10008
+DATA_IS_EXIST       = 10009
 # other
 UNKNOWN             = 20001
 
@@ -28,6 +29,7 @@ message = {
     USER_EXIST      : '用户已存在',
     USER_NO_EXIST   : '用户不存在',
     DATA_NO_EXIST   : '数据不存在',
+    DATA_IS_EXIST   : '数据已存在',
     UNKNOWN         : '未知错误'
 }
 
