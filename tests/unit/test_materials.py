@@ -3,7 +3,7 @@ import pytest
 import json
 
 
-def add_data_to_database(clinet, headers, url):
+def add_data_to_database(clinet, headers, url, data={'name':'data'}):
     rv = clinet.post(url)
     assert rv.status_code == 401
 
@@ -15,7 +15,7 @@ def add_data_to_database(clinet, headers, url):
     assert result['error_code'] == 10008
 
     rv = clinet.post(url,
-                    data=json.dumps(dict(name='PCB')),
+                    data=json.dumps(data),
                     headers=headers)
     assert rv.status_code == 200
     result = json.loads(rv.data)
@@ -23,7 +23,7 @@ def add_data_to_database(clinet, headers, url):
     assert isinstance(result['data'], dict)
 
     rv = clinet.post(url,
-                    data=json.dumps(dict(name='PCB')),
+                    data=json.dumps(data),
                     headers=headers)
     assert rv.status_code == 200
     result = json.loads(rv.data)
@@ -91,7 +91,11 @@ def post_data_to_databse_id(clinet, headers, url, id=1, data=None):
     assert result['error_code'] == 10001
 
 def test_add_category(clinet, headers):
-    add_data_to_database(clinet, headers, '/api/v01/categorys')
+    data = {
+        'name': 'PCB',
+        'encode_rules': '20001000000'
+    }
+    add_data_to_database(clinet, headers, '/api/v01/categorys', data)
 
 def test_get_category(clinet, headers):
     get_data_from_database(clinet, headers, '/api/v01/categorys')

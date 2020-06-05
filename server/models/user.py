@@ -46,6 +46,20 @@ class User(BaseModel, UserMixin):
     permission = Column(Integer, default=0)
     active = Column(Boolean, default=False)
 
+    _default_fields = [
+        'id',
+        'name',
+        'department',
+        'active',
+        'permission',
+    ]
+
+    _hidden_fields = [
+        'password',
+    ]
+
+    _readonly_fields = []
+
     def _get_password(self):
         """Returns the hashed password."""
         return self._password

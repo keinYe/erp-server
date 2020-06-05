@@ -31,13 +31,15 @@ class Categorys(Resource):
     def post(self):
         json = request.get_json(force=True)
         name = json.get('name', None)
-        if name is None:
+        encode_rules = json.get('encode_rules', None)
+        if name is None or encode_rules is None:
             return result.create_response(result.DATA_NO_EXIST)
         category = Category.query.filter_by(name=name).first()
         if category:
             return result.create_response(result.DATA_IS_EXIST)
         category = Category()
         category.name = name
+        category.encode_rules = encode_rules
         category.save()
         return result.create_response(result.OK, category)       
 
@@ -126,24 +128,30 @@ class Materials(Resource):
 
     def post(self):
         json = request.get_json(force=True)
-        serial = json.get('serial', None)
         manu_serial = json.get('manu_serial', None)
-        desc = json.get('desc', None)
+        description = json.get('desc', None)
         category_id = json.get('category_id', None)
         manufacturer_id = json.get('manufacturer_id', None)
-        if not serial or not manu_serial or not desc or not category_id or not manufacturer_id:
+        if not manu_serial or not desc or not category_id or not manufacturer_id:
             return result.create_response(result.DATA_NO_EXIST)
         category = Category.query.filter_by(id=category_id).first()
         manufacturer = Manufacturer.query.filter_by(id=manufacturer_id).first()
         if not category or not manufacturer:
             return result.create_response(result.DATA_NO_EXIST)
-        material = Material.query.filter_by(serial=serial).first()
+
+        material = Material.query.filter_by(manu_serial=manu_serial).first()
         if material:
             return result.create_response(result.DATA_IS_EXIST)
+        serial = ''
+        tmp = Material.query.filter_by(category_id=category.id).order_by(desc(Material.serial)).first()
+        if not tmp:
+            serial = str(int(category.encode_rules) + 1)
+        else:
+            serial = str(int(tmp.serial) + 1)
         material = Material()
         material.serial = serial
         material.manu_serial = manu_serial
-        material.desc = desc
+        material.desc = description
         material.category = category
         material.manufacturer = manufacturer
         material.save()

@@ -13,6 +13,7 @@ from sqlalchemy import (
     Float,
 )
 from sqlalchemy.orm import relationship
+from server.models.vendor import makers
 
 
 class Category(BaseModel):
@@ -20,10 +21,21 @@ class Category(BaseModel):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     # 物料种类
-    name = Column(String(20), unique=True)
+    name = Column(String(20), unique=True, nullable=False)
+    # 编码规则, 分类的第一个元件以此为基+1 作为编码
+    encode_rules = Column(String(20), unique=True)
 
     # 一个分类可以有多种物料
     material = relationship('Material', backref='category')
+
+    _default_fields = [
+        'id',
+        'name',
+        'encode_rules',
+    ]
+
+    _hidden_fields = []
+    _readonly_fields = []
 
 class Manufacturer(BaseModel):
     __tablename__ = 'manufacturer'
@@ -34,6 +46,13 @@ class Manufacturer(BaseModel):
 
     # 一个生产商可以有多种物料
     material = relationship('Material', backref='manufacturer')
+
+    _default_fields = [
+        'id',
+        'name',
+    ]
+    _hidden_fields = []
+    _readonly_fields = []
 
 
 class Material(BaseModel):
@@ -46,16 +65,33 @@ class Material(BaseModel):
     manu_serial = Column(String(100), unique=True, nullable=False)
     # 描述
     desc = Column(String(200), nullable=False)
+    # 立创代码
+    lc_code = Column(String(20), unique=True)
     # 最后一次的采购价格
     price = Column(Float)
     # 库存数量
     stock = Column(Integer, default=0)
 
-
     # 一种物料只能有一个分类
     category_id = Column(Integer, ForeignKey('category.id'))
     # 一种物料智能有一个生产商
     manufacturer_id = Column(Integer, ForeignKey('manufacturer.id'))
+
+    vendors = relationship(
+        "Vendor",
+        secondary=makers,
+        back_populates="materials")
+
+    _default_fields = [
+        'id',
+        'serial',
+        'manu_serial',
+        'desc',
+        'lc_code',
+        'stock',
+    ]
+    _hidden_fields = []
+    _readonly_fields = []
 
 
     def stock_add(self, quantity):
