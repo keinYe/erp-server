@@ -48,7 +48,7 @@ class Vendor(BaseModel):
     # 地址
     address = Column(String(200))
     # 税号
-    tax_number = Column(String(100))
+    tax_number = Column(String(100), unique=True)
 
     liaison = relationship('Liaison', backref='vendor')
 
