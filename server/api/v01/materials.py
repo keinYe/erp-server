@@ -52,15 +52,14 @@ class CategoryInfo(Resource):
             return result.create_response(result.ID_NOT_EXIST)
         return result.create_response(result.OK, category)
 
-    def post(self, id):
+    def put(self, id):
         category = Category.query.filter_by(id=id).first()
         if category is None:
             return result.create_response(result.ID_NOT_EXIST)   
         json = request.get_json(force=True)
         name = json.get('name', None)
-        if name is None:
-            return result.create_response(result.DATA_NO_EXIST)
-        category.name = name
+        if name:
+            category.name = name
         category.save()
         return result.create_response(result.OK, category)                    
 
@@ -100,15 +99,14 @@ class ManufacturerInfo(Resource):
             return result.create_response(result.ID_NOT_EXIST)
         return result.create_response(result.OK, manufacturer)
 
-    def post(self, id):
+    def put(self, id):
         manufacturer = Manufacturer.query.filter_by(id=id).first()
         if not manufacturer:
             return result.create_response(result.ID_NOT_EXIST)
         json = request.get_json(force=True)
         name = json.get('name', None)
-        if name is None:
-            return result.create_response(result.DATA_NO_EXIST)
-        manufacturer.name = name
+        if name:
+            manufacturer.name = name
         manufacturer.save()
         return result.create_response(result.OK, manufacturer)
 
@@ -166,7 +164,7 @@ class MaterialInfo(Resource):
             return result.create_response(result.ID_NOT_EXIST)
         return result.create_response(result.OK, material)
 
-    def post(self, id):
+    def put(self, id):
         material = Material.query.filter_by(id=id).first()
         if not material:
             return result.create_response(result.ID_NOT_EXIST)

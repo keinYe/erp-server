@@ -86,7 +86,7 @@ class VendorList(Resource):
         count = Vendor.query.with_entities(func.count(Vendor.id)).scalar()
         return result.create_response(result.OK, {
             'count': count,
-            'liaison': [x.to_dict() for x in vendors]
+            'vendors': [x.to_dict(show=['liaison'], _hide=[]) for x in vendors]
         })
 
     def post(self):
@@ -98,6 +98,7 @@ class VendorList(Resource):
         if vendor is not None:
             return result.create_response(result.DATA_IS_EXIST)
         vendor = Vendor()
+        vendor.name = name
         vendor.address = json.get('address', None)
         vendor.tax_number = json.get('tax_number', None)
         lialison_id = json.get('liaison_id', None)
@@ -113,10 +114,30 @@ class VendorInfo(Resource):
     decorators = [multi_auth.login_required]
 
     def get(self, id):
-        pass
+        vendor = Vendor.query.filter_by(id=id).first()
+        if vendor is None:
+            return result.create_response(result.ID_NOT_EXIST)
+        return result.create_response(result.OK, vendor)
 
     def put(self, id):
-        pass
+        vendor = Vendor.query.filter_by(id=id).first()
+        if vendor is None:
+            return result.create_response(result.ID_NOT_EXIST)   
+        json = request.get_json(force=True)
+        if json.get('name', None):
+            vendor.name = json.get('name')
+        if json.get('address', None):
+            vendor.tel = json.get('address')
+        if json.get('tax_number', None):
+            vendor.qq = json.get('tax_number')
+        liaison_id = json.get('liaison_id', None)
+        if liaison_id is not None:
+            liaison = Vendor.query.filter_by(id=liaison_id).first()
+            if liaison is None:
+                return result.create_response(result.DATA_NO_EXIST)
+            vendor.liaison.append(liaison)
+        vendor.save()
+        return result.create_response(result.OK, vendor)      
 
 api.add_resource(LiaisonList, '/api/v01/liaison')
 api.add_resource(LiaisonInfo, '/api/v01/liaison/<int:id>')
