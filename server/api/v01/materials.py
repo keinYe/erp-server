@@ -152,6 +152,7 @@ class Materials(Resource):
         material.desc = description
         material.category = category
         material.manufacturer = manufacturer
+        material.lc_code = json.get('lc_code')
         material.save()
         return result.create_response(result.OK, material)
 
@@ -172,6 +173,7 @@ class MaterialInfo(Resource):
         material.serial = json.get('serial') if json.get('serial', None) else material.serial
         material.manu_serial = json.get('manu_serial') if json.get('manu_serial', None) else material.manu_serial
         material.desc = json.get('desc') if json.get('desc', None) else material.desc
+        material.lc_code = json.get('lc_code') if json.get('lc_code') else material.lc_code
         category_id = json.get('category_id', None)
         manufacturer_id = json.get('manufacturer_id', None)
         category = Category.query.filter_by(id=category_id).first()
@@ -180,7 +182,7 @@ class MaterialInfo(Resource):
             material.category = category
         if manufacturer:
             material.manufacturer = manufacturer
-        material.save()     
+        material.save()
         return result.create_response(result.OK, material)
 
 

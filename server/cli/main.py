@@ -83,8 +83,9 @@ def server(ctx):
 def install(username, password):
     if not database_exists(db.engine.url):
         create_database(db.engine.url)
+        db.create_all()
     if database_exists(db.engine.url):
-        user = User.query.filter_by(name=username).one()
+        user = User.query.filter_by(name=username).first()
         if user:
             user.password = password
         else:
