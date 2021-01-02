@@ -12,6 +12,7 @@ from sqlalchemy import asc, desc, func
 from flask import g, jsonify, current_app, request
 from server.api import result
 import logging
+from server.module import db
 
 logger = logging.getLogger(__name__)
 
@@ -23,9 +24,20 @@ class Categorys(Resource):
         limit = int(request.args['limit']) if request.args['limit'] else 20
         categorys = Category.query.order_by(desc(Category.id)).limit(limit).offset(offset)
         count = Category.query.with_entities(func.count(Category.id)).scalar()
+        category_list = []
+        for category in categorys:
+            number = Material.query.with_entities(func.count(Material.id)) \
+                    .filter_by(category_id=Category.id).scalar()
+            data = {
+                'id' : category.id,
+                'name' : category.name,
+                'encode_rules' : category.encode_rules,
+                'material_count' : number
+            }
+            category_list.append(data)
         return result.create_response(result.OK, {
             'count': count,
-            'category': [x.to_dict() for x in categorys]
+            'category': category_list
         })
 
     def post(self):
